@@ -14,7 +14,7 @@ async function main() {
         slug: 'article-writer',
         description: 'Generates structured tech articles with summary, content, and tags',
         provider: 'gemini',
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.5-flash-lite',
         systemPrompt: 'You are an expert technical blog writer. Generate structured articles according to the requested topic and tone. Return output in strictly valid JSON format matching the output schema.',
         outputSchema: JSON.stringify(
           {
@@ -40,7 +40,7 @@ async function main() {
       where: { id: articleWriter.id },
       data: {
         provider: 'gemini',
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.5-flash-lite',
       },
     });
   }
