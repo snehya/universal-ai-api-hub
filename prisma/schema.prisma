@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Connector {
+  id           String           @id @default(uuid())
+  name         String
+  slug         String           @unique
+  description  String?
+  provider     String
+  model        String
+  systemPrompt String?
+  outputSchema String
+  enabled      Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  inputs       InputParameter[]
+  logs         RequestLog[]
+}
+
+model InputParameter {
+  id           String    @id @default(uuid())
+  connectorId  String
+  connector    Connector @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+  
+  name         String
+  type         String
+  required     Boolean   @default(false)
+  description  String?
+  defaultValue String?
+  validation   String?
+  order        Int       @default(0)
+}
+
+model AppApiKey {
+  id        String   @id @default(uuid())
+  name      String
+  key       String   @unique
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model RequestLog {
+  id             String     @id @default(uuid())
+  connectorId    String?
+  connector      Connector? @relation(fields: [connectorId], references: [id], onDelete: SetNull)
+
+  timestamp      DateTime   @default(now())
+  success        Boolean
+  responseTimeMs Int
+  provider       String
+  model          String
+
+  inputTokens    Int?
+  outputTokens   Int?
+  totalTokens    Int?
+  estimatedCost  Float?
+
+  errorType      String?
+  errorMessage   String?
+
+  requestPayload String?
+  responsePayload String?
+}
